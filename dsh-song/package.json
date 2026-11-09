@@ -1,0 +1,42 @@
+{
+  "name": "dsh-song",
+  "version": "0.1.1",
+  "description": "Text-to-song for DeepSeek Harness: one prompt in, two finished MP3s out. Billed ¥1.2 per generation through a Xiapan Cloud wallet.",
+  "type": "module",
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js"
+  },
+  "files": [
+    "index.js",
+    "lib/",
+    "cordis.patch.yml",
+    "dsh-plugin.naming.json",
+    "README.md"
+  ],
+  "keywords": [
+    "ai-generation",
+    "deepseek-harness",
+    "dsh",
+    "dsh-plugin",
+    "xiapan-cloud",
+    "xiapan-wallet"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dongsheng123132/dsh-song"
+  },
+  "engines": {
+    "node": ">=22",
+    "dsh": ">=0.1.0-rc.6 <0.3.0"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "dependencies": {
+    "dsh-aigc-core": "^0.1.0"
+  }
+}

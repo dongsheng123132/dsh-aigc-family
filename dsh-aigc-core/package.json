@@ -1,0 +1,29 @@
+{
+  "name": "dsh-aigc-core",
+  "version": "0.1.0",
+  "description": "Shared kernel for the dsh-aigc-* plugin family: Xiapan Cloud wallet, gateway calls, and human-readable upstream errors. Zero dependencies.",
+  "type": "module",
+  "main": "./index.mjs",
+  "exports": {
+    ".": "./index.mjs"
+  },
+  "files": [
+    "index.mjs",
+    "README.md"
+  ],
+  "keywords": [
+    "dsh-plugin",
+    "dsh",
+    "xiapan-cloud",
+    "wallet",
+    "gateway"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dongsheng123132/dsh-aigc-core"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

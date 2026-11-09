@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "policy": "dsh-plugin-naming/v1",
+  "plugin": {
+    "namespace": "dsh",
+    "name": "merit",
+    "coordinate": "dsh/merit",
+    "packageName": "dsh-merit"
+  },
+  "names": {
+    "pluginNames": [
+      "dsh-merit"
+    ],
+    "loaderIds": [
+      "dsh-merit"
+    ],
+    "services": [],
+    "tools": [
+      "dsh_merit_knock",
+      "dsh_merit_status"
+    ],
+    "commands": [],
+    "skills": [],
+    "skillProviders": [],
+    "events": [],
+    "settingsNamespaces": [],
+    "routes": []
+  }
+}

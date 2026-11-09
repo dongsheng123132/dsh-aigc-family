@@ -1,0 +1,41 @@
+{
+  "name": "dsh-aigc-studio",
+  "version": "0.1.1",
+  "description": "AI creation studio for DeepSeek Harness: images, songs, uploads and wallet in one plugin. Pay per generation through a Xiapan Cloud wallet.",
+  "type": "module",
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js"
+  },
+  "files": [
+    "index.js",
+    "lib/",
+    "cordis.patch.yml",
+    "dsh-plugin.naming.json",
+    "README.md"
+  ],
+  "keywords": [
+    "dsh-plugin",
+    "dsh",
+    "deepseek-harness",
+    "ai-generation",
+    "xiapan-cloud"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dongsheng123132/dsh-aigc-studio"
+  },
+  "engines": {
+    "node": ">=22",
+    "dsh": ">=0.1.0-rc.6 <0.3.0"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "dependencies": {
+    "dsh-aigc-core": "^0.1.0"
+  }
+}

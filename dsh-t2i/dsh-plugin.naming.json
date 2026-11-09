@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "policy": "dsh-plugin-naming/v1",
+  "plugin": {
+    "namespace": "dsh",
+    "name": "t2i",
+    "coordinate": "dsh/t2i",
+    "packageName": "dsh-t2i"
+  },
+  "names": {
+    "pluginNames": [
+      "dsh-t2i"
+    ],
+    "loaderIds": [
+      "dsh-t2i"
+    ],
+    "services": [],
+    "tools": [
+      "dsh_t2i_generate",
+      "dsh_t2i_wallet"
+    ],
+    "commands": [],
+    "skills": [],
+    "skillProviders": [],
+    "events": [],
+    "settingsNamespaces": [],
+    "routes": []
+  }
+}

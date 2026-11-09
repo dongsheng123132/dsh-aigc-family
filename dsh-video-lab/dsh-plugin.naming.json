@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "policy": "dsh-plugin-naming/v1",
+  "plugin": {
+    "namespace": "dsh",
+    "name": "video-lab",
+    "coordinate": "dsh/video-lab",
+    "packageName": "dsh-video-lab"
+  },
+  "names": {
+    "pluginNames": [
+      "dsh-video-lab"
+    ],
+    "loaderIds": [
+      "dsh-video-lab"
+    ],
+    "services": [],
+    "tools": [
+      "dsh_video_create",
+      "dsh_video_wallet"
+    ],
+    "commands": [],
+    "skills": [],
+    "skillProviders": [],
+    "events": [],
+    "settingsNamespaces": [],
+    "routes": []
+  }
+}
