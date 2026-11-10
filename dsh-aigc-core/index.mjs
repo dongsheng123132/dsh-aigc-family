@@ -21,7 +21,11 @@ export function createWallet(config = {}) {
       try {
         const k = JSON.parse(readFileSync(uking, 'utf8')).key
         if (k && /^sk-/.test(k)) return { apiKey: k, source: 'uking' }
-      } catch {}
+      } catch (err) {
+        // 读不到或格式坏了都只意味着"这条来源没有密钥"：忽略，继续尝试下一个来源。
+        // 不吞掉别的语义——文件存在但 key 无效时下面的 throw 仍会报出来。
+        void err
+      }
     }
     throw new Error('还没有钱包密钥。三种补法：①设置环境变量 XIAPAN_API_KEY ②装 dsh-aigc 并用它的 wallet 工具开户 ③把密钥写进 ~/.dsh/aigc-wallet.json 的 apiKey 字段。')
   }

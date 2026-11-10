@@ -25,5 +25,10 @@
   },
   "engines": {
     "node": ">=22"
+  },
+  "scripts": {
+    "check": "node ../scripts/check.mjs",
+    "prepack": "npm run check",
+    "test": "node ../scripts/check.mjs"
   }
 }

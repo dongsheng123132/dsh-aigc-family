@@ -42,5 +42,9 @@
     "@deepseek-ai/cordis": "~4.1.0",
     "@deepseek-ai/dsh-tools": "0.2.2-rc.1",
     "@deepseek-ai/schemastery": "~3.18.5"
+  },
+  "scripts": {
+    "check": "node ../scripts/check.mjs",
+    "prepack": "npm run check"
   }
 }

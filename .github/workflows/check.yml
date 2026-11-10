@@ -1,0 +1,34 @@
+name: check
+
+# 家族仓的统一门禁：结构 / 语法 / 加载 / Config / 官方红线。
+# 依赖（@deepseek-ai/dsh-tools、schemastery）由 DSH 宿主提供，CI 里用最小 stub 顶替，
+# 只验证我们自己的代码能不能加载、工具注册对不对——不验证宿主行为。
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Stub host-provided peers
+        run: |
+          mkdir -p node_modules/@deepseek-ai/dsh-tools node_modules/@deepseek-ai/schemastery
+          cat > node_modules/@deepseek-ai/dsh-tools/index.js <<'EOF'
+          export function defineTool(def) { return def }
+          EOF
+          echo '{"name":"@deepseek-ai/dsh-tools","version":"0.0.0-stub","type":"module","main":"index.js"}' > node_modules/@deepseek-ai/dsh-tools/package.json
+          cat > node_modules/@deepseek-ai/schemastery/index.js <<'EOF'
+          const chain = () => ({ default: (v) => ({ _d: v, description: () => ({ _d: v }) }) })
+          export default { object: (o) => o, string: chain, natural: chain, number: chain, boolean: chain }
+          EOF
+          echo '{"name":"@deepseek-ai/schemastery","version":"0.0.0-stub","type":"module","main":"index.js"}' > node_modules/@deepseek-ai/schemastery/package.json
+          ln -sfn ../dsh-aigc-core node_modules/dsh-aigc-core
+      - name: Run family check
+        run: node scripts/check.mjs
