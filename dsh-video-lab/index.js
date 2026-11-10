@@ -3,19 +3,35 @@ import { join } from 'node:path'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { defineTool } from '@deepseek-ai/dsh-tools'
+import Schema from '@deepseek-ai/schemastery'
 import { createWallet, explainHttp, sleep, walletPayload } from 'dsh-aigc-core'
 
 export const name = 'dsh-video-lab'
 export const inject = ['tools']
+
+// ── 配置：Schemastery schema（官方契约要求；禁止普通对象，也不许硬编码可调参数）──
+export const Config = Schema.object({
+  model: Schema.string().default('doubao-seedance-2-0-mini-260615').description("视频模型；mini ¥2.9 / fast ¥4.9 / full ¥6.9"),
+  pollMs: Schema.natural().default(10000).description("轮询间隔毫秒"),
+  maxPollMs: Schema.natural().default(900000).description("最长等待毫秒"),
+  outputDir: Schema.string().default('').description("落盘目录；留空则 ~/Downloads/dsh-video-lab"),
+  baseUrl: Schema.string().default('').description("网关地址；留空用默认虾盘云"),
+})
+
+/** 给测试和直接 apply 的调用方补默认值。 */
+export function resolveConfig(config = {}) {
+  return { model: 'doubao-seedance-2-0-mini-260615', pollMs: 10000, maxPollMs: 900000, outputDir: '', baseUrl: '', ...(config || {}) }
+}
 
 const PRICE = { 'doubao-seedance-2-0-mini-260615': 2.9, 'doubao-seedance-2-0-fast-260128': 4.9, 'doubao-seedance-2-0-260128': 6.9 }
 
 function renderJson(_a, v) { return [{ type: 'text', text: JSON.stringify(v, null, 1) }] }
 
 export function createDefinitions(ctx, config = {}) {
-  const wallet = createWallet(config)
-  const outDir = config.outputDir || join(homedir(), 'Downloads', 'dsh-video-lab')
-  const defaultModel = config.model || 'doubao-seedance-2-0-mini-260615'
+  const cfg = resolveConfig(config)
+  const wallet = createWallet(cfg)
+  const outDir = cfg.outputDir || join(homedir(), 'Downloads', 'dsh-video-lab')
+  const defaultModel = cfg.model || 'doubao-seedance-2-0-mini-260615'
 
   return [defineTool({
     name: 'dsh_video_create',
@@ -43,10 +59,10 @@ export function createDefinitions(ctx, config = {}) {
         const taskId = sj?.task_id || sj?.taskId || sj?.id || sj?.data?.task_id || sj?.data?.id
         if (!taskId) throw new Error(`提交成功但没拿到任务号：${st.slice(0, 200)}`)
 
-        const deadline = Date.now() + (config.maxPollMs || 900000)
+        const deadline = Date.now() + (cfg.maxPollMs || 900000)
         let url = '', lastStatus = ''
         while (Date.now() < deadline) {
-          await sleep(config.pollMs || 10000)
+          await sleep(cfg.pollMs || 10000)
           const r = await fetch(`${wallet.baseUrl}/v1/video/generations/${encodeURIComponent(taskId)}`, {
             headers: { authorization: `Bearer ${s.apiKey}` }, signal: AbortSignal.timeout(30000)
           })

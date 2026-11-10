@@ -3,10 +3,23 @@ import { join } from 'node:path'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { defineTool } from '@deepseek-ai/dsh-tools'
+import Schema from '@deepseek-ai/schemastery'
 import { createWallet, explainHttp, walletPayload } from 'dsh-aigc-core'
 
 export const name = 'dsh-t2i'
 export const inject = ['tools']
+
+// ── 配置：Schemastery schema（官方契约要求；禁止普通对象，也不许硬编码可调参数）──
+export const Config = Schema.object({
+  model: Schema.string().default('gpt-image-2.6-1k').description("出图模型；默认 ¥0.03/张"),
+  outputDir: Schema.string().default('').description("落盘目录；留空则 ~/Downloads/dsh-t2i"),
+  baseUrl: Schema.string().default('').description("网关地址；留空用默认虾盘云"),
+})
+
+/** 给测试和直接 apply 的调用方补默认值。 */
+export function resolveConfig(config = {}) {
+  return { model: 'gpt-image-2.6-1k', outputDir: '', baseUrl: '', ...(config || {}) }
+}
 
 function renderJson(_a, v) { return [{ type: 'text', text: JSON.stringify(v, null, 1) }] }
 
@@ -17,9 +30,10 @@ function mapSize(size) {
 }
 
 export function createDefinitions(ctx, config = {}) {
-  const wallet = createWallet(config)
-  const outputDir = config.outputDir || join(homedir(), 'Downloads', 'dsh-t2i')
-  const model = config.model || 'gpt-image-2.6-1k' // ¥0.03/张，实测默认档
+  const cfg = resolveConfig(config)
+  const wallet = createWallet(cfg)
+  const outputDir = cfg.outputDir || join(homedir(), 'Downloads', 'dsh-t2i')
+  const model = cfg.model || 'gpt-image-2.6-1k' // ¥0.03/张，实测默认档
 
   return [
     defineTool({

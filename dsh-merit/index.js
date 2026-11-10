@@ -3,9 +3,21 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { join, dirname } from 'node:path'
 import { defineTool } from '@deepseek-ai/dsh-tools'
+import Schema from '@deepseek-ai/schemastery'
 
 export const name = 'dsh-merit'
 export const inject = ['tools']
+
+// ── 配置：Schemastery schema（官方契约要求；禁止普通对象，也不许硬编码可调参数）──
+export const Config = Schema.object({
+  maxKnock: Schema.natural().default(108).description("单次最多敲几下（上限保护）"),
+  file: Schema.string().default('').description("账本路径；留空则 ~/.dsh/merit.json"),
+})
+
+/** 给测试和直接 apply 的调用方补默认值。 */
+export function resolveConfig(config = {}) {
+  return { maxKnock: 108, file: '', ...(config || {}) }
+}
 
 const FILE = join(homedir(), '.dsh', 'merit.json')
 const DAY = new Date().toISOString().slice(0, 10)
@@ -18,6 +30,7 @@ function save(v) { mkdirSync(dirname(FILE), { recursive: true }); writeFileSync(
 function renderJson(_a, v) { return [{ type: 'text', text: JSON.stringify(v, null, 1) }] }
 
 export function createDefinitions(ctx, config = {}) {
+  const cfg = resolveConfig(config)
   return [
     defineTool({
       name: 'dsh_merit_knock',

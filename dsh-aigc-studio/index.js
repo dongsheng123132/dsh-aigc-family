@@ -3,10 +3,26 @@ import { join } from 'node:path'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { defineTool } from '@deepseek-ai/dsh-tools'
+import Schema from '@deepseek-ai/schemastery'
 import { createWallet, runTask, explainHttp, sleep, walletPayload } from 'dsh-aigc-core'
 
 export const name = 'dsh-aigc-studio'
 export const inject = ['tools']
+
+// ── 配置：Schemastery schema（官方契约要求；禁止普通对象，也不许硬编码可调参数）──
+export const Config = Schema.object({
+  imageModel: Schema.string().default('gpt-image-2.6-1k').description("出图模型；默认 ¥0.03/张"),
+  mv: Schema.string().default('chirp-hawk').description("Suno 版本；chirp-hawk = v6"),
+  pollMs: Schema.natural().default(10000).description("轮询间隔毫秒"),
+  maxPollMs: Schema.natural().default(600000).description("最长等待毫秒"),
+  outputDir: Schema.string().default('').description("落盘根目录；留空则 ~/Downloads/dsh-aigc-studio"),
+  baseUrl: Schema.string().default('').description("网关地址；留空用默认虾盘云"),
+})
+
+/** 给测试和直接 apply 的调用方补默认值。 */
+export function resolveConfig(config = {}) {
+  return { imageModel: 'gpt-image-2.6-1k', mv: 'chirp-hawk', pollMs: 10000, maxPollMs: 600000, outputDir: '', baseUrl: '', ...(config || {}) }
+}
 
 function renderJson(_a, v) { return [{ type: 'text', text: JSON.stringify(v, null, 1) }] }
 
@@ -17,9 +33,10 @@ function mapSize(size) {
 }
 
 export function createDefinitions(ctx, config = {}) {
-  const wallet = createWallet(config)
-  const root = config.outputDir || join(homedir(), 'Downloads', 'dsh-aigc-studio')
-  const imageModel = config.imageModel || 'gpt-image-2.6-1k'
+  const cfg = resolveConfig(config)
+  const wallet = createWallet(cfg)
+  const root = cfg.outputDir || join(homedir(), 'Downloads', 'dsh-aigc-studio')
+  const imageModel = cfg.imageModel || 'gpt-image-2.6-1k'
 
   const stamp = () => new Date().toISOString().replace(/[-:T.]/g, '').slice(0, 14)
 
@@ -75,11 +92,11 @@ export function createDefinitions(ctx, config = {}) {
           const s = await wallet.ensureKey()
           const body = { prompt: args.prompt }
           if (args.lyrics) body.lyrics = args.lyrics
-          else body.mv = config.mv || 'chirp-hawk'
+          else body.mv = cfg.mv || 'chirp-hawk'
           if (args.instrumental) body.make_instrumental = true
           const { taskId, clips } = await runTask({
             baseUrl: wallet.baseUrl, apiKey: s.apiKey, path: '/suno/submit/music', body,
-            pollMs: config.pollMs || 10000, maxPollMs: config.maxPollMs || 600000
+            pollMs: cfg.pollMs || 10000, maxPollMs: cfg.maxPollMs || 600000
           })
           const dir = join(root, 'songs'); mkdirSync(dir, { recursive: true })
           const files = []
@@ -116,7 +133,7 @@ export function createDefinitions(ctx, config = {}) {
           const s = await wallet.ensureKey()
           const { taskId, clips } = await runTask({
             baseUrl: wallet.baseUrl, apiKey: s.apiKey, path: '/suno/submit/uploads', body: { url: target },
-            pollMs: config.pollMs || 8000, maxPollMs: config.maxPollMs || 300000, needAudio: false
+            pollMs: cfg.pollMs || 8000, maxPollMs: cfg.maxPollMs || 300000, needAudio: false
           })
           const c = clips[0] || {}
           return { ok: true, taskId, clipId: c.clip_id || c.id || '', title: c.title || '', duration: c.duration ?? null, audioUrl: c.audio_url || '', cost: '¥0.045' }

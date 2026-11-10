@@ -1,6 +1,6 @@
 {
   "name": "dsh-aigc-studio",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "AI creation studio for DeepSeek Harness: images, songs, uploads and wallet in one plugin. Pay per generation through a Xiapan Cloud wallet.",
   "type": "module",
   "main": "./index.js",
@@ -37,5 +37,9 @@
   },
   "dependencies": {
     "dsh-aigc-core": "^0.1.0"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh-tools": "0.2.2-rc.1",
+    "@deepseek-ai/schemastery": "~3.18.5"
   }
 }
