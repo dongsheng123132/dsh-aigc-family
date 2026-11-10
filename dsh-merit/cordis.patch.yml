@@ -1,3 +1,18 @@
+# dsh-merit bundle patch.
+#
+# 一个 bundle 的 `dsh.bundle.patch` 就是在空 profile 根上做一次 insert。
+# profile 按 id 寻址这一行；用户自己的 cordis.patch.yml 在 bundle 层之后应用，
+# 所以想改配置不用碰这个包——在用户侧按同一个 id 覆盖即可（整行替换，不深合并）。
+#
+# Row keys:
+#   id   — 稳定的组合键，刻意等于 npm 包名：一个行 id 对应一个包名，不留第二套命名空间
+#   name — 通过 profile 解析的模块标识符，即 npm 包名
+#
+# 所有可调参数在 index.js 的 Config（Schemastery）里有校验过的默认值；
+# 只有要偏离默认时才取消下面 config 的注释。注意 patch 是整行替换，
+# 想保留的键必须全部重述。
 - insert:
     - id: dsh-merit
-      name: 'dsh-merit'
+      name: dsh-merit
+      # config:
+      #   见 index.js 的 export const Config —— 每个字段都有 .description()

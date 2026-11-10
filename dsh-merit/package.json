@@ -1,6 +1,6 @@
 {
   "name": "dsh-merit",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Merit counter for DeepSeek Harness: knock the wooden fish while your AI works, keep a local tally. No network, no billing.",
   "type": "module",
   "main": "./index.js",
@@ -36,6 +36,7 @@
     }
   },
   "peerDependencies": {
+    "@deepseek-ai/cordis": "~4.1.0",
     "@deepseek-ai/dsh-tools": "0.2.2-rc.1",
     "@deepseek-ai/schemastery": "~3.18.5"
   }

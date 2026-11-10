@@ -1,6 +1,6 @@
 {
   "name": "dsh-video-lab",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Text-to-video for DeepSeek Harness via the Xiapan Cloud gateway. Submit, poll, download MP4.",
   "type": "module",
   "main": "./index.js",
@@ -40,6 +40,7 @@
     "dsh-aigc-core": "^0.1.0"
   },
   "peerDependencies": {
+    "@deepseek-ai/cordis": "~4.1.0",
     "@deepseek-ai/dsh-tools": "0.2.2-rc.1",
     "@deepseek-ai/schemastery": "~3.18.5"
   }
